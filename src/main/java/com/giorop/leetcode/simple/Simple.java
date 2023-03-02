@@ -3,9 +3,7 @@ package com.giorop.leetcode.simple;
 import com.giorop.leetcode.ListNode;
 import com.giorop.leetcode.TreeNode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @Description TODO
@@ -15,6 +13,368 @@ import java.util.Stack;
  * @Version 1.0
  */
 public class Simple {
+    /**
+     * 平衡二叉树
+     * @param root
+     * @return
+     */
+    public boolean _110isBalanced(TreeNode root) {
+        return hight(root)!=-1;
+    }
+    private int hight(TreeNode root){
+        if(root==null){
+            return 0;
+        }
+        int left=hight(root.left);
+        int right=hight(root.right);
+        if(left==-1||right==-1||Math.abs(left-right)>1){
+            return -1;
+        }
+        return 1+Math.max(left,right);
+    }
+    /**
+     * 最小深度 叶子节点记为1
+     * @param root
+     * @return
+     */
+    public int _111minDepth(TreeNode root) {
+        if(root==null){
+            return 0;
+        }
+        if(root.left==null&&root.right==null){
+            return 1;
+        }
+        int left=_111minDepth(root.left);
+        int right=_111minDepth(root.right);
+        if(left==0){
+            return right+1;
+        }else if(right==0){
+            return left+1;
+        }else{
+            return 1+Math.min(left,right);
+        }
+    }
+    /**
+     * 路径和，root到叶子节点路径和是否等于targetSum
+     * @param root
+     * @param targetSum
+     * @return
+     */
+    public boolean _112hasPathSum(TreeNode root, int targetSum) {
+        if(root==null){
+            return false;
+        }
+        if(root.left==null&&root.right==null&&root.val==targetSum){
+            return true;
+        }
+        return _112hasPathSum(root.left,targetSum-root.val)||_112hasPathSum(root.right,targetSum-root.val);
+    }
+    /**
+     * 杨辉三角所有行
+     * @param numRows
+     * @return
+     */
+    public List<List<Integer>> _118generate(int numRows) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+
+        for (int i = 1; i <= numRows; i++) {
+            List<Integer> lis = new ArrayList<>();
+            for (int j = 0; j < i; j++) {
+                if (j == 0 || j == i - 1) {
+                    lis.add(1);
+                } else {
+                    lis.add(list.get(i - 2).get(j) + list.get(i - 2).get(j - 1));
+                }
+            }
+            list.add(lis);
+        }
+        return list;
+    }
+    /**
+     * 杨辉三角某一行
+     * @param rowIndex
+     * @return
+     */
+    public List<Integer> _119getRow(int rowIndex) {
+        //排列组合
+        List<Integer> res = new ArrayList<>(rowIndex + 1);
+        long cur = 1;
+        for (int i = 0; i <= rowIndex; i++) {
+            res.add((int) cur);
+            cur = cur * (rowIndex-i)/(i+1);
+        }
+        return res;
+    }
+    /**
+     * 只交易一次的最大利润
+     * @param prices
+     * @return
+     */
+    public int _121maxProfit(int[] prices) {
+        int min=prices[0];
+        int ans=0;
+        for(int i=1;i<prices.length;i++){
+            ans=Math.max(ans,prices[i]-min);
+            min=Math.min(min,prices[i]);
+        }
+        return ans;
+    }
+    /**
+     * 判断大小写字符是否回文 排除一些其它字符
+     * @param s
+     * @return
+     */
+    public boolean _125isPalindrome(String s) {
+        int left=0,right=s.length()-1;
+        while(left<=right){
+            while (left<=right&&!Character.isLetterOrDigit(s.charAt(left))){
+                left++;
+            }
+            while(left<=right&&!Character.isLetterOrDigit(s.charAt(right))){
+                right--;
+            }
+            if(left<=right&&Character.toLowerCase(s.charAt(left))!=Character.toLowerCase(s.charAt(right))){
+                return false;
+            }
+            left++;right--;
+        }
+        return true;
+    }
+    /**
+     * 数列中只有一个数字出现那一次 其余出现偶数次
+     * @param nums
+     * @return 只出现一次的数字
+     */
+    public int _136singleNumber(int[] nums) {
+        int xor=0;
+        for(int num:nums){
+            xor&=num;
+        }
+        return xor;
+    }
+    /**
+     * 判断是否有环
+     * @param head
+     * @return
+     */
+    public boolean _141hasCycle(ListNode head) {
+        if(head==null){
+            return false;
+        }
+        ListNode fast=head;
+        ListNode slow=head;
+        while(fast!=null&&fast.next!=null){
+            fast=fast.next;
+            fast=fast.next;
+            slow=slow.next;
+            if(slow==fast){
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * 前序遍历
+     * @param root
+     * @return
+     */
+    public List<Integer> _144preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (root == null) {
+            return res;
+        }
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        TreeNode node = root;
+        while (!stack.isEmpty() || node != null) {
+            while (node != null) {//前序遍历
+                res.add(node.val);
+                stack.push(node);
+                node = node.left;
+            }
+            node = stack.pop();
+            node = node.right;
+        }
+        return res;
+    }
+    /**
+     * 后续遍历
+     * @param root
+     * @return
+     */
+    public List<Integer> _145postorderTraversal(TreeNode root) {
+        List<Integer>list=new ArrayList<>();
+        Stack<TreeNode>stack=new Stack<>();
+        TreeNode cur=root;
+        TreeNode pre=null;
+        while(!stack.isEmpty()||cur!=null){
+            if(cur!=null){
+                stack.push(cur);
+                cur=cur.left;
+            }else{
+                cur=stack.pop();
+                if(cur.right==null||cur.right==pre){
+                    list.add(cur.val);
+                    pre=cur;
+                    cur=null;
+                }else{
+                    stack.push(cur);
+                    cur=cur.right;
+                }
+            }
+        }
+        return list;
+    }
+    /**
+     * 链表相交节点
+     * @param headA
+     * @param headB
+     * @return
+     */
+    public ListNode _160getIntersectionNode(ListNode headA, ListNode headB) {
+        if(headA==null||headB==null){
+            return null;
+        }
+        ListNode a=headA,b=headB;
+        while(a!=b){
+            if(a==null){
+                a=headB;
+            }else{
+                a=a.next;
+            }
+            if(b==null){
+                b=headA;
+            }else{
+                b=b.next;
+            }
+        }
+        return a;
+    }
+    /**
+     * 字符转数字 A-1 B-2
+     * @param columnNumber
+     * @return
+     */
+    public String _168convertToTitle(int columnNumber) {
+        StringBuilder sb=new StringBuilder();
+        while(columnNumber!=0){
+            int a=(columnNumber-1)%26;
+            columnNumber=(columnNumber-1)/26;
+            sb.append((char)(a+'A'));
+        }
+        return sb.reverse().toString();
+    }
+    /**
+     * 返回多数元素 题意保证一定存在多数元素
+     * @param nums
+     * @return
+     */
+    public int _169majorityElement(int[] nums) {
+        int seed=nums[0];
+        int count=1;
+        for(int i=1;i<nums.length;i++){
+            if(nums[i]==seed){
+                count++;
+            }else{
+                count--;
+                if(count==0){
+                    if(i==nums.length-1){
+                        return -1;
+                    }else{
+                        seed=nums[++i];
+                        count=1;
+                    }
+                }
+            }
+        }
+        return seed;
+    }
+    /**
+     * 大写字符转数字 A-1 B-2
+     * @param columnTitle
+     * @return
+     */
+    public int _17titleToNumber(String columnTitle) {
+        int ans=0;
+        for(char c:columnTitle.toCharArray()){
+            ans=ans*26+(c-'A')+1;
+        }
+        return ans;
+    }
+    /**
+     * 逆转是否一样
+     * @param x integer范围
+     * @return
+     */
+    public boolean _9isPalindrome(int x) {
+        if(x==0){
+            return true;
+        }
+        if(x<0||x%10==0){
+            return false;
+        }
+        int y=0;
+        while(y<x){
+            int a=x%10;//低位
+            y=y*10+a;
+            if(x==y){
+                return true;
+            }else if(y<0){//一半不会越界
+                return false;
+            }
+            x/=10;
+        }
+        return x==y;
+    }
+    /**
+     * 罗马符转数字
+     * @param s
+     * @return
+     */
+    public int _013romanToInt(String s) {
+        String strs="IVXLCDM";
+        int[]vals=new int[]{1,5,10,50,100,500,1000};
+        Map<Character,Integer> map=new HashMap<>();
+        for(int i=0;i<strs.length();i++){
+            map.put(strs.charAt(i),vals[i]);
+        }
+
+        int ans=0,pre=-1;
+        for(char c:s.toCharArray()){
+            int val=map.get(c);
+            if(pre==-1){
+                pre=val;
+            }else if(val<=pre){
+                ans+=pre;
+                pre=val;
+            }else{
+                ans+=val-pre;
+                pre=-1;
+            }
+        }
+        if(pre!=-1){
+            ans+=pre;
+        }
+        return ans;
+    }
+    /**
+     * 最长公共前缀
+     * @param strs 长度至少为1
+     * @return
+     */
+    public String _14longestCommonPrefix(String[] strs) {
+        int len=strs[0].length();
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<len;i++){
+            char c=strs[0].charAt(i);
+            for(String str:strs){
+                if(str.length()<=i||str.charAt(i)!=c){
+                    return sb.toString();
+                }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
     /**
      * 有效括号
      * @param s
