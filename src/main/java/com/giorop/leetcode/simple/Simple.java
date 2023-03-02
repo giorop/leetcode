@@ -13,6 +13,71 @@ import java.util.*;
  * @Version 1.0
  */
 public class Simple {
+    public static void main(String[] args) {
+        System.out.println("hello");
+    }
+    /**
+     * 同构字符串映射
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean _205isIsomorphic(String s, String t) {
+        if(s.length()!=t.length()){
+            return false;
+        }
+        Map<Character,Character>map=new HashMap<>();
+        Set<Character>set=new HashSet<>();
+        for(int i=0;i<s.length();i++){
+            char c=s.charAt(i);
+            char d=t.charAt(i);
+            if(map.containsKey(c)){
+                if(map.get(c)!=d){
+                    return false;
+                }
+            }else if(set.contains(d)){
+                return false;
+            }else{
+                map.put(c,d);
+                set.add(d);
+            }
+        }
+        return true;
+    }
+    /**
+     * 移除链表中特定val的节点
+     * @param head
+     * @param val
+     * @return
+     */
+    public ListNode _203removeElements(ListNode head, int val) {
+        ListNode dummy=new ListNode();
+        ListNode cur=dummy,p=head;
+        while(p!=null){
+            if(p.val!=val){
+                cur.next=p;
+                cur=p;
+            }
+            p=p.next;
+        }
+        cur.next=null;
+        return dummy.next;
+    }
+    /**
+     * 翻转二叉树
+     * @param root
+     * @return
+     */
+    public TreeNode _226invertTree(TreeNode root) {
+        if(root==null){
+            return root;
+        }
+        TreeNode left=_226invertTree(root.left);
+        TreeNode right=_226invertTree(root.right);
+        root.left=right;
+        root.right=left;
+        return root;
+    }
     /**
      * 平衡二叉树
      * @param root
