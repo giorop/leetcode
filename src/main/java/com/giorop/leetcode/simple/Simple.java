@@ -13,8 +13,339 @@ import java.util.*;
  * @Version 1.0
  */
 public class Simple {
-    public static void main(String[] args) {
-        System.out.println("hello");
+    /**
+     * 仅翻转元音字符
+     * @param s
+     * @return
+     */
+    public String _345reverseVowels(String s) {
+        String str="aeiouAEIOU";
+        Set<Character>set=new HashSet<>();
+        for(char c:str.toCharArray()){
+            set.add(c);
+        }
+        char[]chars=s.toCharArray();
+        int left=0,right=s.length()-1;
+        while(left<right){
+            while(left<right&&!set.contains(chars[left])){
+                left++;
+            }
+            while(left<right&&!set.contains(chars[right])){
+                right--;
+            }
+            if(left<right){
+                char tmp=chars[left];
+                chars[left]=chars[right];
+                chars[right]=tmp;
+            }
+            left++;right--;
+        }
+        return new String(chars);
+    }
+    /**
+     * 翻转数列
+     * @param s
+     */
+    public void _344reverseString(char[] s) {
+        int left=0,right=s.length-1;
+        while(left<right){
+            char tmp=s[left];
+            s[left++]=s[right];
+            s[right--]=tmp;
+        }
+    }
+    /**
+     * 4的幂次方
+     * @param n
+     * @return
+     */
+    public boolean _342isPowerOfFour(int n) {
+        //最大能整除(只有一个比特位有效) 且 n&(0x55555555)!=0
+        if(n<=0||(n&(n-1))!=0){
+            return false;
+        }
+        return (n&0x55555555)!=0;
+    }
+    /**
+     * 比特位计数
+     * @param n
+     * @return
+     */
+    public int[] _338countBits(int n) {
+        int[]ans=new int[n+1];
+        if(n==0){
+            return ans;
+        }
+        ans[1]=1;
+        for(int i=2;i<=n;i++){
+            ans[i]=ans[i/2];
+            if(i%2==1){
+                ans[i]+=1;
+            }
+        }
+        return ans;
+    }
+    /**
+     * 3的幂
+     * @param n
+     * @return
+     */
+    public boolean _326isPowerOfThree(int n) {
+        //反证 如果n中包含其它因子 则一定不能整除
+        return n > 0 && 1162261467%n == 0;
+    }
+    /**
+     *区域和 这里需要保证越界问题
+     */
+    class _303NumArray {
+        int[]sums;
+        public _303NumArray(int[] nums) {
+            this.sums=new int[nums.length+1];
+            for(int i=0;i<nums.length;i++){
+                sums[i+1]=sums[i]+nums[i];
+            }
+        }
+
+        public int sumRange(int left, int right) {
+            return sums[right+1]-sums[left];
+        }
+    }
+    public boolean _292canWinNim(int n) {
+        return n%4!=0;
+    }
+    /**
+     * 一一映射
+     * @param pattern
+     * @param s
+     * @return
+     */
+    public boolean _290wordPattern(String pattern, String s) {
+        String[]strs=s.split(" ");
+        if(strs.length!=pattern.length()){
+            return false;
+        }
+        Map<Character,String>map=new HashMap<>();
+        Set<String>set=new HashSet<>();
+        for(int i=0;i<pattern.length();i++){
+            char c=pattern.charAt(i);
+            //System.out.println(c+strs[i]);
+            if(map.containsKey(c)){
+                if(!map.get(c).equals(strs[i])){
+                    return false;
+                }
+            }else if(set.contains(strs[i])){
+                return false;
+            }else{
+                map.put(c,strs[i]);
+                set.add(strs[i]);
+            }
+        }
+        return true;
+    }
+    /**
+     * 将数组中0移动到末尾
+     * @param nums
+     */
+    public void _283moveZeroes(int[] nums) {
+        int pos=0;
+        for(int num:nums){
+            if(num!=0){
+                nums[pos++]=num;
+            }
+        }
+        for(int i=pos;i<nums.length;i++){
+            nums[pos++]=0;
+        }
+    }
+    /**
+     * 遍历所有根节点到叶子节点路径
+     * @param root
+     * @return
+     */
+    public List<String> _257binaryTreePaths(TreeNode root) {
+        List<String>res=new ArrayList<>();
+        if(root==null){
+            return res;
+        }
+        binaryTreePaths(res,new StringBuilder(),root);
+        return res;
+    }
+    private void binaryTreePaths(List<String>res,StringBuilder sb,TreeNode root){
+        if(root==null){
+            return;
+        }
+        int len=sb.length();
+        sb.append("->").append(root.val);
+        if(root.left==null&&root.right==null){
+            res.add(sb.substring(2).toString());
+        }else{
+            binaryTreePaths(res,sb,root.left);
+            binaryTreePaths(res,sb,root.right);
+        }
+        for(int i=sb.length()-1;i>=len;i--){
+            sb.deleteCharAt(i);
+        }
+    }
+    /**
+     * 字母异位词 仅包含小写字符
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean _242isAnagram(String s, String t) {
+        if(s.length()!=t.length()){
+            return false;
+        }
+        int[]counts=new int[26];
+        for(int i=0;i<s.length();i++){
+            counts[s.charAt(i)-'a']++;
+            counts[t.charAt(i)-'a']--;
+        }
+        for(int i=0;i<counts.length;i++){
+            if(counts[i]!=0){
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * 回文链表
+     * @param head
+     * @return
+     */
+    public boolean _234isPalindrome(ListNode head) {
+        List<Integer>list=new ArrayList<>();
+        ListNode p=head;
+        while(p!=null){
+            list.add(p.val);
+            p=p.next;
+        }
+        int left=0,right=list.size()-1;
+        while(left<right){
+            if(list.get(left++)!=list.get(right--)){
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * 2的幂次方
+     * @param n
+     * @return
+     */
+    public boolean _231isPowerOfTwo(int n) {
+        if(n<=0){
+            return false;
+        }
+        return Integer.bitCount(n)==1;
+    }
+    /**
+     * 区间汇总
+     * @param nums
+     * @return
+     */
+    public List<String> _228summaryRanges(int[] nums) {
+        List<String>list=new ArrayList<>();
+        for(int i=0;i<nums.length;i++){
+            int j=i+1;
+            while(j<nums.length&&nums[j]==nums[j-1]+1){
+                j++;
+            }
+            if(i==j-1){
+                list.add(""+nums[i]);
+            }else{
+                list.add(""+nums[i]+"->"+nums[j-1]);
+            }
+            i=j-1;
+        }
+        return list;
+    }
+    /**
+     * 是否存在相同元素且距离<k
+     * @param nums
+     * @param k
+     * @return
+     */
+    public boolean _219containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer,Integer>map=new HashMap<>();
+        for(int i=0;i<nums.length;i++){
+            if(map.containsKey(nums[i])&&i-map.get(nums[i])<=k){
+                return true;
+            }
+            map.put(nums[i],i);
+        }
+        return false;
+    }
+    /**
+     * 是否存在重复元素
+     * @param nums
+     * @return
+     */
+    public boolean _217containsDuplicate(int[] nums) {
+        Set<Integer>set=new HashSet<>();
+        for(int num:nums){
+            if(!set.add(num)){
+                return  true;
+            }
+        }
+        return false;
+    }
+    /**
+     * 翻转链表
+     * @param head
+     * @return
+     */
+    public ListNode _206reverseList(ListNode head) {
+        ListNode newHead=null;
+        ListNode p=head;
+        while(p!=null){
+            ListNode next=p.next;
+            p.next=newHead;
+            newHead=p;
+            p=next;
+        }
+        return newHead;
+    }
+    /**
+     * 反复相加得到一位数
+     * @param num
+     * @return
+     */
+    public int _258addDigits(int num) {
+        return (num - 1) % 9 + 1;
+    }
+    /**
+     * 只包含235质因数的数字
+     * @param n
+     * @return
+     */
+    public boolean _263isUgly(int n) {
+        if(n<=0){
+            return false;
+        }
+        while(n%2==0){
+            n/=2;
+        }
+        while(n%3==0){
+            n/=3;
+        }
+        while(n%5==0){
+            n/=5;
+        }
+        return n==1;
+    }
+    /**
+     * 刚好缺少一个数字
+     * @param nums
+     * @return
+     */
+    public int _268missingNumber(int[] nums) {
+        int xor=nums.length;
+        for(int i=0;i<nums.length;i++){
+            xor^=i;
+            xor^=nums[i];
+        }
+        return xor;
     }
     /**
      * 同构字符串映射
