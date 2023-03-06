@@ -1,4 +1,4 @@
-package main.java.com.giorop.leetcode.simple;
+package com.giorop.leetcode.simple;
 
 import java.util.*;
 
